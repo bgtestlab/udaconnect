@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Docker Build and Push
+name: Docker build and push for Udaconnect Location API
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -40,8 +40,8 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./modules/location-api
+          file: ./modules/location-api/Dockerfile
           platforms: linux/amd64
           push: true
           tags: boramgwon/udaconnect-location-api:latest
