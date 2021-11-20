@@ -7,6 +7,8 @@ name: Docker Build and Push
 on:
   push:
     branches: [ main ]
+    paths:
+      - "modules/api/**"
   pull_request:
     branches: [ main ]
 
@@ -42,4 +44,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: boramgwon/udaconnect:latest
+          tags: boramgwon/udaconnect-api:latest
