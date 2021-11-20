@@ -8,7 +8,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - "modules/connection-api/**"
+      - "modules/api/**"
   pull_request:
     branches: [ main ]
 
@@ -40,8 +40,8 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./modules/connection-api
-          file: ./modules/connection-api/Dockerfile
+          context: ./modules/api
+          file: ./modules/api/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: boramgwon/udaconnect-connection-api:latest
+          tags: boramgwon/udaconnect-api:latest
