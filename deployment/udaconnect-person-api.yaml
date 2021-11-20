@@ -31,7 +31,7 @@ spec:
         service: udaconnect-person-api
     spec:
       containers:
-      - image: boramgwon/udacity-person-api:latest
+      - image: boramgwon/udaconnect-person-api:latest
         name: udaconnect-person-api
         imagePullPolicy: Always
         env:
