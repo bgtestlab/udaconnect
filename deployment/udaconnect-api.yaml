@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - image: boramgwon/udaconnect-api:latest
-        name: udaconnect-connection-api
+        name: udaconnect-api
         imagePullPolicy: Always
         env:
         - name: DB_USERNAME
