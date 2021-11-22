@@ -5,15 +5,13 @@ from app import db
 from app.udaconnect.models import Location
 from app.udaconnect.schemas import LocationSchema
 from geoalchemy2.functions import ST_AsText, ST_Point
-from kafka import KafkaProducer
+
+import grpc
+import location_pb2
+import location_pb2_grpc
 
 logging.basicConfig(level=logging.WARNING)
-logger = logging.getLogger("udaconnect-api")
-
-# Kafka config
-TOPIC_NAME = 'location_api'
-KAFKA_SERVER = 'kafka:9092'
-
+logger = logging.getLogger("udaconnect-location-api")
 
 class LocationService:
     @staticmethod
@@ -35,16 +33,30 @@ class LocationService:
             logger.warning(f"Unexpected data format in payload: {validation_results}")
             raise Exception(f"Invalid payload: {validation_results}")
 
-        new_location = Location()
-        new_location.person_id = location["person_id"]
-        new_location.creation_time = location["creation_time"]
-        new_location.coordinate = ST_Point(location["latitude"], location["longitude"])
-        db.session.add(new_location)
-        db.session.commit()
+        """
+        Write a message to gRPC server
+        """
+        logger.info(f"Sending location payload to gRPC server")
+        channel = grpc.insecure_channel("localhost:5005")
+        stub = location_pb2_grpc.LocationServiceStub(channel)
 
-        # Send location data to the Kafka broker
-        producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER)
-        producer.send(TOPIC_NAME, bytes(str(location), 'utf-8'))
-        producer.flush()
+        # Update this with desired payload
+        location = location_pb2.LocationMessage(
+            person_id=location["person_id"],
+            latitude=location["latitude"],
+            longitude=location["longitude"],
+            creation_time=location["creation_time"],
+            status=location_pb2.LocationMessage.Status.QUEUED,
+        )
+
+        response = stub.Create(location)
+        logger.info(f"Received location payload from gRPC server: " + str(response))
+        new_location = Location()
+        new_location.person_id = response.person_id
+        new_location.creation_time = response.creation_time
+        new_location.coordinate = ST_Point(response.latitude, response.longitude)
+
+        # db.session.add(new_location)
+        # db.session.commit()
 
         return new_location

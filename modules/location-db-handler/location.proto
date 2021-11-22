@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+message LocationMessage {
+  enum Status {
+    QUEUED = 0;
+    PROCESSING = 1;
+    COMPLETED = 2;
+    FAILED = 3;
+  }
+
+  int32 person_id = 2;
+  string latitude = 3;
+  string longitude = 4;
+  string creation_time = 5;
+  Status status = 6;
+}
+
+message Empty {
+
+}
+
+message LocationMessageList {
+  repeated LocationMessage locations = 1;
+}
+
+service LocationService {
+    rpc Create(LocationMessage) returns (LocationMessage);
+    rpc Get(Empty) returns (LocationMessageList);
+}
