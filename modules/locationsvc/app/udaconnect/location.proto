@@ -1,0 +1,34 @@
+syntax = "proto3";
+import "google/api/annotations.proto";
+
+message Location {
+  int32 person_id = 2;
+  string latitude = 3;
+  string longitude = 4;
+  string creation_time = 5;
+}
+
+message LocationRequest {
+  int32 person_id = 1;
+}
+
+message LocationList {
+  repeated Location locations = 1;
+}
+
+service LocationService {
+    rpc Create(Location) returns (Location) {
+        option (google.api.http) = {
+            post: "/api/locations/{location_id}"
+            body: "*"
+        };
+    }
+    rpc Retrieve(LocationRequest) returns (LocationList) {
+        option (google.api.http) = {
+            get: "/api/locations/{location_id}"
+            additional_bindings {
+                get: "/api/locations"
+            }
+        };
+    }
+}
